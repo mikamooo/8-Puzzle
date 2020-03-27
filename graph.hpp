@@ -38,8 +38,6 @@ class Graph
         void DOWN(vertex&, int, int);
         void LEFT(vertex&, int, int);
         void RIGHT(vertex&, int, int);
-        void addVertex(int label, vector<int>); // Adds a vertex to the graph
-        void addEdge(int label1, int label2); // Adds an edge to the graph
         bool existingVertex(vector<int>); // Checks whether a vertex has been regenerated
         bool visited(vector<vertex>, vertex);
         void BFS(vector<int>, int); // Breadth First Search
