@@ -34,10 +34,7 @@ class Graph
         ~Graph();
         bool alreadySolved(vertex);
         void findEmptySlot(vertex&);
-        void UP(vertex&, int, int);
-        void DOWN(vertex&, int, int);
-        void LEFT(vertex&, int, int);
-        void RIGHT(vertex&, int, int);
+        void MOVE(vertex&, int, int);
         bool existingVertex(vector<int>); // Checks whether a vertex has been regenerated
         bool visited(vector<vertex>, vertex);
         void BFS(vector<int>, int); // Breadth First Search
