@@ -35,7 +35,7 @@ class Graph
         bool alreadySolved(vertex);
         void findEmptySlot(vertex&);
         void MOVE(vertex&, int, int);
-        bool existingVertex(vector<int>); // Checks whether a vertex has been regenerated
+        bool existingPuzzle(vertex); // Checks whether a puzzle has been regenerated
         bool visited(vector<vertex>, vertex);
         void BFS(vector<int>, int); // Breadth First Search
         void DFS(vector<int>, int); // Depth First Search

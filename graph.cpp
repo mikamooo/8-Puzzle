@@ -118,6 +118,16 @@ bool Graph::visited(vector <vertex> visit, vertex v) // Function to check if a v
     return false;
 }
 
+bool Graph::existingPuzzle(vertex v) // Function to check if a puzzle state has already been generated
+{
+    for (int i = 0; i < vertices.size(); i++)
+    {
+        if (vertices.at(i).puzzle == v.puzzle && vertices.at(i).label != v.label)
+            return true;
+    }
+    return false;
+}
+
 void Graph::BFS(vector<int> pzl, int mode) // Breadth first search algorithm
 {
     algo = "BFS";
@@ -149,6 +159,12 @@ void Graph::BFS(vector<int> pzl, int mode) // Breadth first search algorithm
     {   
         vertex v = Q.front(); // Remove the vertex from queue whose neighbor will be visited now
         Q.pop();
+
+        while (existingPuzzle(v)) // Check if the puzzle state has been generated before
+        {
+            v = Q.front(); // If it has remove the vertex from the queue
+            Q.pop();
+        }
 
         if (v.label != 0) // If the vertex isn't the initial puzzle, increment the cost
         {
@@ -217,6 +233,12 @@ void Graph::DFS(vector<int> pzl, int mode)
     {   
         vertex v = S.top(); // Remove the vertex from stack whose neighbor will be visited now
         S.pop();
+
+        while (existingPuzzle(v)) // Check if the puzzle state has been generated before
+        {
+            v = S.top(); // If it has remove the vertex from the stack
+            S.pop();
+        }
 
         if (v.label != 0) // If the vertex isn't the initial puzzle, increment the cost
         {
