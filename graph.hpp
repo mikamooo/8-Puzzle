@@ -12,6 +12,9 @@ struct vertex // Structure to hold a node of the graph
     int label; // The name of the node (int value from 0 - n)
     vector<int> puzzle; // Array holding the puzzle -> First 3 elements = first row of 8 puzzle, etc.
     list<pair<vertex, unsigned long> > adjList; // Adjacency list to find adjacent nodes
+
+    int g; //the cost of making this MOVE
+    int sumGH; // the current cost and manhattDistance used in Dijkstra's
 };
 
 struct edge // Structure to hold an edge between nodes
