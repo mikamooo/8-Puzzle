@@ -307,6 +307,7 @@ int manhattanDistance(vector<int> pzl){
     // cout << "checking conversion to matrix" << endl;
     for(int i = 0; i < 3; ++i){
         for(int j = 0; j < 3; ++j){
+            // cout << "count: " << count << " puzzle[count]: " << pzl[count] << endl;
             board[i][j] = pzl[count];
             count++;
             // cout << board[i][j] << " ";
@@ -316,11 +317,12 @@ int manhattanDistance(vector<int> pzl){
     int sum = 0;
 
     div_t result;
-    for(int i = 0; i < 3; ++i)
-        for(int j = 0; j < 3; ++j)
+    for(int i = 0; i < 3; ++i){
+        for(int j = 0; j < 3; ++j){
+            // cout << "i: " << i << endl;
+            // cout << "j: " << j << endl;
+
             if(board[i][j] != 0){   //i guess we dont count the displacement of 0???
-                // int i_ = i;
-                // int j_ = j;
                 int value = 0;
                 int spaces = 0;
                 if(board[i][j] == 4||board[i][j] == 6||board[i][j] == 8){ //consider our arrangement for solution
@@ -347,11 +349,22 @@ int manhattanDistance(vector<int> pzl){
                     result = div(value-1, 3);
                     spaces = abs(result.quot - i) + abs(result.rem - j);    
 
+                    // cout << "result.quot: " << result.quot << endl;
+                    // cout << "i: " << i << endl;
+                    // cout << "abs(result.quot - i)" << abs(result.quot - i) << endl;
+                    // cout << "result.rem: " << result.rem << endl;    
+                    // cout << "j: " << j << endl;    
+                    // cout << "abs(result.rem - j)" << abs(result.rem - j) << endl;    
+                   
                     cout << "value at board[i][j]: " << board[i][j] << endl;
                     cout << "num of spaces til correct place: " << spaces << endl;
                 }
-                sum += spaces*value;    // because the cost of each move is not 1, but the value of the tile
+                sum = sum + (spaces*board[i][j]);    // because the cost of each move is not 1, but the value of the tile
+                                    //this is not same as value bc i changed it in the above
             }
+        }
+    }        
+    cout << "manhattanDist: " << sum << endl;
     return sum;
 }
 
@@ -374,13 +387,12 @@ void Graph::Dijkstra(vector<int> pzl, int mode)
         return;
     }
 
-
-
-    
     // BFS-style search for next minimum step
     map<vector<int>, bool> seen;    //check if a node's puzzle has already been seen to avoid loops 
     vector<vertex> path;            // the shortest path
-    vertex v = initial;
+    vertex v;                       // instead of v = initial; bc we dont have a move constructor
+    v.label = 0;
+    v.puzzle = pzl;
     int currCost = 0;
 
     seen.emplace(make_pair(v.puzzle, true));    // we have seen this initial vertex
@@ -391,35 +403,41 @@ void Graph::Dijkstra(vector<int> pzl, int mode)
         vertex minU;            // holds the u in N(v) that has the min sumGH
         minU.sumGH = INT_MAX;
 
-
         list<pair<vertex, unsigned long> >::iterator it; // Create an iterator to iterate through v's neighbors
 
         for(it = v.adjList.begin(); it != v.adjList.end(); ++it){  // for each u in N(v)
             vertex u = (*it).first;
             // cout << "u.g: " << u.g << endl; // check that we're adding the correct penalty for this move
             if(seen.count(u.puzzle) == 0){  //if this adjacent puzzle has not been generated yet
-                cout << "solution has NOT been generated before" << endl;
-                print(u.puzzle);
+                // cout << "solution has NOT been generated before" << endl;
+                // print(u.puzzle);
                 seen.emplace(make_pair(u.puzzle, true));  // add to seen bc its been discovered
                 // calculate G+H --> G will have to be the cost of this move U.g +currCost + manhattanDistance();
                 u.sumGH = u.g + currCost + manhattanDistance(u.puzzle);
+                cout << endl;
                 // cout << "u.g: " << u.g << endl;
                 // cout << "currCost: " << currCost << endl; 
                 // cout << "manhattanDist: " << manhattanDistance(u.puzzle) << endl;
+                
+                cout << "u.sumGH: " << u.sumGH << endl;
+                cout << "minU.sumGH: " << minU.sumGH << endl;
+
                 if(u.sumGH < minU.sumGH){ // we need to keep track of which neighbor has the least sum
                     minU = u;
                 }
             } else {
-                cout << "solution has been generated before" << endl;
-                print(u.puzzle);          
+                // cout << "solution has been generated before" << endl;
+                // print(u.puzzle);          
             }
         } // end for all u in N(v)
 
+        // cout << "whats added to path: " << endl;
+        print(minU.puzzle);
+        cout << endl;
         path.push_back(minU); // add this min neighbor as next node in solution path
         currCost += minU.g; // curr cost is the addition of the tile value we just moved
         v = minU; // now we evaluate new node we chose
     } // end while
-
 
     //print the path
     for(int i = 0; i < path.size(); ++i){
