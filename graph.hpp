@@ -33,17 +33,20 @@ class Graph
         vector<int> solution;
         string algo;
         int label;
-        map<vector<int>, bool> exists;
+        vector<vertex> path;
     public:
         Graph();
         ~Graph();
         bool alreadySolved(vertex);
         void findEmptySlot(vertex&);
         void MOVE(vertex&, int, int);
+        bool existingPuzzle(vertex); // Checks whether a puzzle has been regenerated
+        bool visited(vector<vertex>, vertex);
         void BFS(vector<int>, int); // Breadth First Search
         void DFS(vector<int>, int); // Depth First Search
         void Dijkstra(vector<int>, int); // Dijkstra's Algorithm
         void print(vector<int>); // Print the solution and the total cost 
+        int getCost() {return cost;}
 };
 
 #endif 
