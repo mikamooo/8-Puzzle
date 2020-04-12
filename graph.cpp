@@ -399,27 +399,6 @@ void Graph::Dijkstra(vector<int> pzl, int mode)
     cout << "Minimum cost: " << currCost << endl;
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 void Graph::print(vector<int> pzl) // Function to print out the puzzle and cost
 {
     cout << endl;
