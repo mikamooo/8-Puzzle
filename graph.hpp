@@ -5,6 +5,7 @@
 #include <list>
 #include <utility>
 #include <vector>
+#include <map>
 using namespace std;
 
 struct vertex // Structure to hold a node of the graph
@@ -32,14 +33,13 @@ class Graph
         vector<int> solution;
         string algo;
         int label;
+        map<vector<int>, bool> exists;
     public:
         Graph();
         ~Graph();
         bool alreadySolved(vertex);
         void findEmptySlot(vertex&);
         void MOVE(vertex&, int, int);
-        bool existingPuzzle(vertex); // Checks whether a puzzle has been regenerated
-        bool visited(vector<vertex>, vertex);
         void BFS(vector<int>, int); // Breadth First Search
         void DFS(vector<int>, int); // Depth First Search
         void Dijkstra(vector<int>, int); // Dijkstra's Algorithm

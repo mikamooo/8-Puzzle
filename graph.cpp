@@ -106,29 +106,9 @@ void Graph::MOVE(vertex& v, int empty, int tile) // Function to create a vertex 
 
     vertices.push_back(MOVE);
     edges.push_back(e);
+    exists.emplace(make_pair(v.puzzle, true));
     v.adjList.push_back(make_pair(MOVE, e.weight)); // Update v and MOVE's adjacency lists
     MOVE.adjList.push_back(make_pair(v, e.weight));
-}
-
-bool Graph::visited(vector <vertex> visit, vertex v) // Function to check if a vertex has already been visited
-{
-    for (int i = 0; i < visit.size(); i++)
-    {
-        if (visit.at(i).label == v.label)
-            return true;
-    }
-
-    return false;
-}
-
-bool Graph::existingPuzzle(vertex v) // Function to check if a puzzle state has already been generated
-{
-    for (int i = 0; i < vertices.size(); i++)
-    {
-        if (vertices.at(i).puzzle == v.puzzle && vertices.at(i).label != v.label)
-            return true;
-    }
-    return false;
 }
 
 void Graph::BFS(vector<int> pzl, int mode) // Breadth first search algorithm
@@ -153,24 +133,25 @@ void Graph::BFS(vector<int> pzl, int mode) // Breadth first search algorithm
     
     int current = 1; // Create a counter to access the weight of the current edge
     queue <vertex> Q; // Create a queue for performing a BFS
-    vector <vertex> discovered; // Create a vector to hold all the discovered nodes
+    map<int, bool> discovered; // Create a map to hold all the discovered nodes
 
     Q.push(initial); // Add the vertex containing the initial puzzle to the queue
-    discovered.push_back(initial); // And mark it as discovered
+    exists.emplace(make_pair(initial.puzzle, true)); // Add it to the existing puzzle states
+    discovered.emplace(make_pair(initial.label, true)); // And mark it as discovered
 
     while(!Q.empty()) // Continue traversing the graph until the queue is empty
     {   
         vertex v = Q.front(); // Remove the vertex from queue whose neighbor will be visited now
         Q.pop();
 
-        while (existingPuzzle(v)) // Check if the puzzle state has been generated before
-        {
-            v = Q.front(); // If it has remove the vertex from the queue
-            Q.pop();
-        }
-
         if (v.label != 0) // If the vertex isn't the initial puzzle, increment the cost
         {
+            if (exists.count(v.puzzle) != 0) // Check if the puzzle state has been generated before
+            {   
+                v = Q.front(); // If it has remove the vertex from the queue
+                Q.pop();
+            }
+
             cost += edges.at(current).weight; // Increment the cost 
             current++;
         }
@@ -183,7 +164,7 @@ void Graph::BFS(vector<int> pzl, int mode) // Breadth first search algorithm
         }
         else if (mode == 1 && v.label != 0) // If it doesn't contain the solution and we are in debug mode
         {
-            cout << endl << "Move " << v.label << ":" << endl; // Print the current puzzle state
+            cout << endl << "Move " << current - 1 << ":" << endl; // Print the current puzzle state
             print(v.puzzle);
         }
 
@@ -193,10 +174,10 @@ void Graph::BFS(vector<int> pzl, int mode) // Breadth first search algorithm
 
         for (it = v.adjList.begin(); it != v.adjList.end(); it++) // Process each of v's neighbors
         {   
-            if (!visited(discovered, (*it).first)) // Check if a neighbor node has been discovered yet
+            if (discovered.count((*it).first.label) == 0) // Check if a neighbor node has been discovered yet
             { 
                 Q.push((*it).first); // Push the neighbor node into the queue
-                discovered.push_back((*it).first); // And mark the neighbor node as discovered
+                discovered.emplace(make_pair((*it).first.label, true)); // And mark the neighbor node as discovered
             }
         }
         
@@ -227,24 +208,25 @@ void Graph::DFS(vector<int> pzl, int mode)
 
     int current = 1; // Create a counter to access the weight of the current edge
     stack <vertex> S; // Create a stack for performing a DFS
-    vector <vertex> discovered; // Create a vector to hold all the discovered nodes
+    map<int, bool> discovered; // Create a map to hold all the discovered nodes
 
     S.push(initial); // Add the vertex containing the initial puzzle to the stack
-    discovered.push_back(initial); // And mark it as discovered
+    exists.emplace(make_pair(initial.puzzle, true)); // Add it to the existing puzzle states
+    discovered.emplace(make_pair(initial.label, true)); // And mark it as discovered
 
     while(!S.empty()) // Continue traversing the graph until the stack is empty
     {   
         vertex v = S.top(); // Remove the vertex from stack whose neighbor will be visited now
         S.pop();
 
-        while (existingPuzzle(v)) // Check if the puzzle state has been generated before
+       if (v.label != 0) // If the vertex isn't the initial puzzle, increment the cost
         {
-            v = S.top(); // If it has remove the vertex from the stack
-            S.pop();
-        }
+            if (exists.count(v.puzzle) != 0) // Check if the puzzle state has been generated before
+            {   
+                v = S.top(); // If it has remove the vertex from the stack
+                S.pop();
+            }
 
-        if (v.label != 0) // If the vertex isn't the initial puzzle, increment the cost
-        {
             cost += edges.at(current).weight; // Increment the cost 
             current++;
         }
@@ -257,7 +239,7 @@ void Graph::DFS(vector<int> pzl, int mode)
         }
         else if (mode == 1 && v.label != 0) // If it doesn't contain the solution and we are in debug mode
         {
-            cout << endl << "Move " << v.label << ":" << endl; // Print the current puzzle state
+            cout << endl << "Move " << current - 1 << ":" << endl; // Print the current puzzle state
             print(v.puzzle);
         }
 
@@ -267,10 +249,10 @@ void Graph::DFS(vector<int> pzl, int mode)
 
         for (it = v.adjList.rbegin(); it != v.adjList.rend(); it++) // Process each of v's neighbors
         {   
-            if (!visited(discovered, (*it).first)) // Check if a neighbor node has been discovered yet
+            if (discovered.count((*it).first.label) == 0) // Check if a neighbor node has been discovered yet
             {
                 S.push((*it).first); // Push the neighbor node onto the stack
-                discovered.push_back((*it).first); // And mark the neighbor node as discovered
+                discovered.emplace(make_pair((*it).first.label, true)); // And mark the neighbor node as discovered
             }
         }
         
