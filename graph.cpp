@@ -5,6 +5,8 @@
 #include <queue>
 #include <iterator>
 #include <stack>
+#include <map>
+#include <stdlib.h>
 using namespace std;
 
 Graph::Graph()
@@ -91,6 +93,7 @@ void Graph::MOVE(vertex& v, int empty, int tile) // Function to create a vertex 
     vertex MOVE; // Create a vertex for moving
     MOVE.label = ++label; // Increment the label
     MOVE.puzzle = v.puzzle; // Initialize MOVE's puzzle to it's parent's puzzle
+    MOVE.g = MOVE.puzzle.at(tile); // i think this is equivalent to e.weight but im not sure, its also == to label i think
     MOVE.puzzle.at(empty) = MOVE.puzzle.at(tile); // Then move the empty slot left, up, right, or down
     MOVE.puzzle.at(tile) = 0;
 
@@ -103,29 +106,9 @@ void Graph::MOVE(vertex& v, int empty, int tile) // Function to create a vertex 
 
     vertices.push_back(MOVE);
     edges.push_back(e);
+    exists.emplace(make_pair(v.puzzle, true));
     v.adjList.push_back(make_pair(MOVE, e.weight)); // Update v and MOVE's adjacency lists
     MOVE.adjList.push_back(make_pair(v, e.weight));
-}
-
-bool Graph::visited(vector <vertex> visit, vertex v) // Function to check if a vertex has already been visited
-{
-    for (int i = 0; i < visit.size(); i++)
-    {
-        if (visit.at(i).label == v.label)
-            return true;
-    }
-
-    return false;
-}
-
-bool Graph::existingPuzzle(vertex v) // Function to check if a puzzle state has already been generated
-{
-    for (int i = 0; i < vertices.size(); i++)
-    {
-        if (vertices.at(i).puzzle == v.puzzle && vertices.at(i).label != v.label)
-            return true;
-    }
-    return false;
 }
 
 void Graph::BFS(vector<int> pzl, int mode) // Breadth first search algorithm
@@ -150,24 +133,25 @@ void Graph::BFS(vector<int> pzl, int mode) // Breadth first search algorithm
     
     int current = 1; // Create a counter to access the weight of the current edge
     queue <vertex> Q; // Create a queue for performing a BFS
-    vector <vertex> discovered; // Create a vector to hold all the discovered nodes
+    map<int, bool> discovered; // Create a map to hold all the discovered nodes
 
     Q.push(initial); // Add the vertex containing the initial puzzle to the queue
-    discovered.push_back(initial); // And mark it as discovered
+    exists.emplace(make_pair(initial.puzzle, true)); // Add it to the existing puzzle states
+    discovered.emplace(make_pair(initial.label, true)); // And mark it as discovered
 
     while(!Q.empty()) // Continue traversing the graph until the queue is empty
     {   
         vertex v = Q.front(); // Remove the vertex from queue whose neighbor will be visited now
         Q.pop();
 
-        while (existingPuzzle(v)) // Check if the puzzle state has been generated before
-        {
-            v = Q.front(); // If it has remove the vertex from the queue
-            Q.pop();
-        }
-
         if (v.label != 0) // If the vertex isn't the initial puzzle, increment the cost
         {
+            if (exists.count(v.puzzle) != 0) // Check if the puzzle state has been generated before
+            {   
+                v = Q.front(); // If it has remove the vertex from the queue
+                Q.pop();
+            }
+
             cost += edges.at(current).weight; // Increment the cost 
             current++;
         }
@@ -180,7 +164,7 @@ void Graph::BFS(vector<int> pzl, int mode) // Breadth first search algorithm
         }
         else if (mode == 1 && v.label != 0) // If it doesn't contain the solution and we are in debug mode
         {
-            cout << endl << "Move " << v.label << ":" << endl; // Print the current puzzle state
+            cout << endl << "Move " << current - 1 << ":" << endl; // Print the current puzzle state
             print(v.puzzle);
         }
 
@@ -190,10 +174,10 @@ void Graph::BFS(vector<int> pzl, int mode) // Breadth first search algorithm
 
         for (it = v.adjList.begin(); it != v.adjList.end(); it++) // Process each of v's neighbors
         {   
-            if (!visited(discovered, (*it).first)) // Check if a neighbor node has been discovered yet
+            if (discovered.count((*it).first.label) == 0) // Check if a neighbor node has been discovered yet
             { 
                 Q.push((*it).first); // Push the neighbor node into the queue
-                discovered.push_back((*it).first); // And mark the neighbor node as discovered
+                discovered.emplace(make_pair((*it).first.label, true)); // And mark the neighbor node as discovered
             }
         }
         
@@ -224,24 +208,25 @@ void Graph::DFS(vector<int> pzl, int mode)
 
     int current = 1; // Create a counter to access the weight of the current edge
     stack <vertex> S; // Create a stack for performing a DFS
-    vector <vertex> discovered; // Create a vector to hold all the discovered nodes
+    map<int, bool> discovered; // Create a map to hold all the discovered nodes
 
     S.push(initial); // Add the vertex containing the initial puzzle to the stack
-    discovered.push_back(initial); // And mark it as discovered
+    exists.emplace(make_pair(initial.puzzle, true)); // Add it to the existing puzzle states
+    discovered.emplace(make_pair(initial.label, true)); // And mark it as discovered
 
     while(!S.empty()) // Continue traversing the graph until the stack is empty
     {   
         vertex v = S.top(); // Remove the vertex from stack whose neighbor will be visited now
         S.pop();
 
-        while (existingPuzzle(v)) // Check if the puzzle state has been generated before
+       if (v.label != 0) // If the vertex isn't the initial puzzle, increment the cost
         {
-            v = S.top(); // If it has remove the vertex from the stack
-            S.pop();
-        }
+            if (exists.count(v.puzzle) != 0) // Check if the puzzle state has been generated before
+            {   
+                v = S.top(); // If it has remove the vertex from the stack
+                S.pop();
+            }
 
-        if (v.label != 0) // If the vertex isn't the initial puzzle, increment the cost
-        {
             cost += edges.at(current).weight; // Increment the cost 
             current++;
         }
@@ -254,7 +239,7 @@ void Graph::DFS(vector<int> pzl, int mode)
         }
         else if (mode == 1 && v.label != 0) // If it doesn't contain the solution and we are in debug mode
         {
-            cout << endl << "Move " << v.label << ":" << endl; // Print the current puzzle state
+            cout << endl << "Move " << current - 1 << ":" << endl; // Print the current puzzle state
             print(v.puzzle);
         }
 
@@ -264,10 +249,10 @@ void Graph::DFS(vector<int> pzl, int mode)
 
         for (it = v.adjList.rbegin(); it != v.adjList.rend(); it++) // Process each of v's neighbors
         {   
-            if (!visited(discovered, (*it).first)) // Check if a neighbor node has been discovered yet
+            if (discovered.count((*it).first.label) == 0) // Check if a neighbor node has been discovered yet
             {
                 S.push((*it).first); // Push the neighbor node onto the stack
-                discovered.push_back((*it).first); // And mark the neighbor node as discovered
+                discovered.emplace(make_pair((*it).first.label, true)); // And mark the neighbor node as discovered
             }
         }
         
@@ -275,6 +260,71 @@ void Graph::DFS(vector<int> pzl, int mode)
             break;
     }
 }
+
+// the estimate cost taken from current state to the solution state 
+//if 1 is at puzzle[0] then its 0 steps
+//if 2 is at puzzle[3] then it is 2 steps away from goal --> 2*2 for the way it costs in our case
+//sum of these steps away from goal is the manhattan distance
+int manhattanDistance(vector<int> pzl){
+    int count = 0;  //converting the vector into a matrix for calculations
+    vector<vector<int>> board {
+        {0, 0, 0},
+        {0, 0, 0},
+        {0, 0, 0}
+    };
+    // cout << "checking conversion to matrix" << endl;
+    for(int i = 0; i < 3; ++i){
+        for(int j = 0; j < 3; ++j){
+            board[i][j] = pzl[count];
+            count++;
+            // cout << board[i][j] << " ";
+        }
+    }
+
+    int sum = 0;
+
+    div_t result;
+    for(int i = 0; i < 3; ++i)
+        for(int j = 0; j < 3; ++j)
+            if(board[i][j] != 0){   //i guess we dont count the displacement of 0???
+                // int i_ = i;
+                // int j_ = j;
+                int value = 0;
+                int spaces = 0;
+                if(board[i][j] == 4||board[i][j] == 6||board[i][j] == 8){ //consider our arrangement for solution
+                    switch(board[i][j]) {// these values treated as their parallel in other solution arrangement
+                        case 4: value = 6; 
+                                break;
+                        case 6: value = 8;
+                                break;
+                        case 8: value = 4;
+                                break;
+                        default: cout << "some glitch in manhattabDistance()" << endl;
+                    } // end switch
+                    result = div(value-1, 3);
+                    spaces = abs(result.quot - i) + abs(result.rem - j);    
+
+                    cout << "value at board[i][j]: " << board[i][j] << endl;
+                    cout << "num of spaces til correct place: " << spaces << endl; 
+                } else if (board[i][j] == 5){
+                    spaces = 4-i-j;
+                    cout << "value at board[i][j]: " << board[i][j] << endl;
+                    cout << "num of spaces til correct place: " << spaces << endl;
+                } else {    
+                    value = board[i][j]; // these values unchanged
+                    result = div(value-1, 3);
+                    spaces = abs(result.quot - i) + abs(result.rem - j);    
+
+                    cout << "value at board[i][j]: " << board[i][j] << endl;
+                    cout << "num of spaces til correct place: " << spaces << endl;
+                }
+                sum += spaces*value;    // because the cost of each move is not 1, but the value of the tile
+            }
+    return sum;
+}
+
+//G = current cost of steps taken to get t0 current state from initial
+//H = manhattanDistance is cost remaining from current to reach goal
 
 void Graph::Dijkstra(vector<int> pzl, int mode)
 {
@@ -286,14 +336,67 @@ void Graph::Dijkstra(vector<int> pzl, int mode)
 
     cout << "Initial puzzle" << endl; // Print out the initial puzzle
     print(initial.puzzle);
-
     if(alreadySolved(initial)) // Check that the puzzle is not already solved
     {
         cout << "This puzzle is already solved." << endl;
         return;
     }
 
-    vertices.push_back(initial); // Add the root to the list of vertices in our graph
+
+
+    
+    // BFS-style search for next minimum step
+    map<vector<int>, bool> seen;    //check if a node's puzzle has already been seen to avoid loops 
+    vector<vertex> path;            // the shortest path
+    vertex v = initial;
+    int currCost = 0;
+
+    seen.emplace(make_pair(v.puzzle, true));    // we have seen this initial vertex
+    path.push_back(v);                          // we also agree it is the start of the path
+
+    while(!alreadySolved(v)){   // while the node we are at is NOT the solution
+        findEmptySlot(v);       // fill v.adjList where v.adjList[i] = (adjVertex, edgeweight)
+        vertex minU;            // holds the u in N(v) that has the min sumGH
+        minU.sumGH = INT_MAX;
+
+
+        list<pair<vertex, unsigned long> >::iterator it; // Create an iterator to iterate through v's neighbors
+
+        for(it = v.adjList.begin(); it != v.adjList.end(); ++it){  // for each u in N(v)
+            vertex u = (*it).first;
+            // cout << "u.g: " << u.g << endl; // check that we're adding the correct penalty for this move
+            if(seen.count(u.puzzle) == 0){  //if this adjacent puzzle has not been generated yet
+                cout << "solution has NOT been generated before" << endl;
+                print(u.puzzle);
+                seen.emplace(make_pair(u.puzzle, true));  // add to seen bc its been discovered
+                // calculate G+H --> G will have to be the cost of this move U.g +currCost + manhattanDistance();
+                u.sumGH = u.g + currCost + manhattanDistance(u.puzzle);
+                // cout << "u.g: " << u.g << endl;
+                // cout << "currCost: " << currCost << endl; 
+                // cout << "manhattanDist: " << manhattanDistance(u.puzzle) << endl;
+                if(u.sumGH < minU.sumGH){ // we need to keep track of which neighbor has the least sum
+                    minU = u;
+                }
+            } else {
+                cout << "solution has been generated before" << endl;
+                print(u.puzzle);          
+            }
+        } // end for all u in N(v)
+
+        path.push_back(minU); // add this min neighbor as next node in solution path
+        currCost += minU.g; // curr cost is the addition of the tile value we just moved
+        v = minU; // now we evaluate new node we chose
+    } // end while
+
+
+    //print the path
+    for(int i = 0; i < path.size(); ++i){
+        cout << endl << "Move " << i << ": " << endl;
+        print(path[i].puzzle);
+        cout << endl;
+    }
+    //print the final cost
+    cout << "Minimum cost: " << currCost << endl;
 }
 
 void Graph::print(vector<int> pzl) // Function to print out the puzzle and cost
@@ -304,4 +407,3 @@ void Graph::print(vector<int> pzl) // Function to print out the puzzle and cost
     cout << pzl.at(6) << " " << pzl.at(7) << " " << pzl.at(8) << endl << endl;
     cout << "Total cost: " << cost << endl;
 }
-

@@ -5,6 +5,7 @@
 #include <list>
 #include <utility>
 #include <vector>
+#include <map>
 using namespace std;
 
 struct vertex // Structure to hold a node of the graph
@@ -12,6 +13,9 @@ struct vertex // Structure to hold a node of the graph
     int label; // The name of the node (int value from 0 - n)
     vector<int> puzzle; // Array holding the puzzle -> First 3 elements = first row of 8 puzzle, etc.
     list<pair<vertex, unsigned long> > adjList; // Adjacency list to find adjacent nodes
+
+    int g; //the cost of making this MOVE
+    int sumGH; // the current cost and manhattDistance used in Dijkstra's
 };
 
 struct edge // Structure to hold an edge between nodes
@@ -29,14 +33,13 @@ class Graph
         vector<int> solution;
         string algo;
         int label;
+        map<vector<int>, bool> exists;
     public:
         Graph();
         ~Graph();
         bool alreadySolved(vertex);
         void findEmptySlot(vertex&);
         void MOVE(vertex&, int, int);
-        bool existingPuzzle(vertex); // Checks whether a puzzle has been regenerated
-        bool visited(vector<vertex>, vertex);
         void BFS(vector<int>, int); // Breadth First Search
         void DFS(vector<int>, int); // Depth First Search
         void Dijkstra(vector<int>, int); // Dijkstra's Algorithm
