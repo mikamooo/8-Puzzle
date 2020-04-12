@@ -22,6 +22,7 @@ Graph::~Graph()
     vertices.clear();
     edges.clear();
     solution.clear();
+    path.clear();
 }
 
 bool Graph::alreadySolved(vertex v) // Function to check if the initial puzzle is already solved
@@ -111,6 +112,41 @@ void Graph::MOVE(vertex& v, int empty, int tile) // Function to create a vertex 
     MOVE.adjList.push_back(make_pair(v, e.weight));
 }
 
+<<<<<<< HEAD
+=======
+bool Graph::visited(vector <vertex> visit, vertex v) // Function to check if a vertex has already been visited
+{
+    for (int i = 0; i < visit.size(); i++)
+    {
+        if (visit.at(i).label == v.label)
+            return true;
+    }
+
+    return false;
+}
+
+bool Graph::existingPuzzle(vertex v) // Function to check if a puzzle state has already been generated
+{
+    if (algo == "DFS") // Don't check the puzzle states created but not on DFS's path
+    {
+        for (int i = 0; i < path.size(); i++)
+        {
+            if (path.at(i).puzzle == v.puzzle && path.at(i).label != v.label)
+                return true;
+        }
+    }
+    else if(algo == "BFS")
+    {
+        for (int i = 0; i < vertices.size(); i++)
+        {
+            if (vertices.at(i).puzzle == v.puzzle && vertices.at(i).label != v.label)
+                return true;
+        }
+    }
+    return false;
+}
+
+>>>>>>> add-other-changes
 void Graph::BFS(vector<int> pzl, int mode) // Breadth first search algorithm
 {
     algo = "BFS";
@@ -211,8 +247,13 @@ void Graph::DFS(vector<int> pzl, int mode)
     map<int, bool> discovered; // Create a map to hold all the discovered nodes
 
     S.push(initial); // Add the vertex containing the initial puzzle to the stack
+<<<<<<< HEAD
     exists.emplace(make_pair(initial.puzzle, true)); // Add it to the existing puzzle states
     discovered.emplace(make_pair(initial.label, true)); // And mark it as discovered
+=======
+    discovered.push_back(initial); // And mark it as discovered
+    path.push_back(initial);
+>>>>>>> add-other-changes
 
     while(!S.empty()) // Continue traversing the graph until the stack is empty
     {   
@@ -227,6 +268,12 @@ void Graph::DFS(vector<int> pzl, int mode)
                 S.pop();
             }
 
+<<<<<<< HEAD
+=======
+        if (v.label != 0) // If the vertex isn't the initial puzzle, increment the cost
+        {
+            path.push_back(v);
+>>>>>>> add-other-changes
             cost += edges.at(current).weight; // Increment the cost 
             current++;
         }
@@ -399,6 +446,27 @@ void Graph::Dijkstra(vector<int> pzl, int mode)
     cout << "Minimum cost: " << currCost << endl;
 }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 void Graph::print(vector<int> pzl) // Function to print out the puzzle and cost
 {
     cout << endl;
@@ -406,4 +474,8 @@ void Graph::print(vector<int> pzl) // Function to print out the puzzle and cost
     cout << pzl.at(3) << " " << pzl.at(4) << " " << pzl.at(5) << endl;
     cout << pzl.at(6) << " " << pzl.at(7) << " " << pzl.at(8) << endl << endl;
     cout << "Total cost: " << cost << endl;
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> add-other-changes

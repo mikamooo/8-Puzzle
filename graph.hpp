@@ -33,7 +33,11 @@ class Graph
         vector<int> solution;
         string algo;
         int label;
+<<<<<<< HEAD
         map<vector<int>, bool> exists;
+=======
+        vector<vertex> path;
+>>>>>>> add-other-changes
     public:
         Graph();
         ~Graph();
@@ -44,6 +48,7 @@ class Graph
         void DFS(vector<int>, int); // Depth First Search
         void Dijkstra(vector<int>, int); // Dijkstra's Algorithm
         void print(vector<int>); // Print the solution and the total cost 
+        int getCost() {return cost;}
 };
 
 #endif 
