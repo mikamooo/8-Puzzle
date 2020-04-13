@@ -1,5 +1,5 @@
 # 8-Puzzle
-Program to solve an 8-puzzle using BFS, DFS, and Dijkstra's
+Program to solve an 8-puzzle using BFS, DFS, and Dijkstra's.
 
 Source for BFS pseudocode: https://www.hackerearth.com/practice/algorithms/graphs/breadth-first-search/tutorial/
 
@@ -18,7 +18,7 @@ To execute, use the command: ./driver
 
 ***Tester***
 
-Running the tester version uses the text file test_puzzles.txt to compare and print the expected results of the test cases to the calculated results.
+Running the tester version uses the text file, test_puzzles.txt, to compare and print the expected results of the test cases to the calculated results.
 
 To compile, use the command: make tester
 
