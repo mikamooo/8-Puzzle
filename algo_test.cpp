@@ -48,13 +48,12 @@ int main()
         cout << "------------------" << endl << endl;
         g2.DFS(puzzle, 2);
         cout << "Expected cost: " << dfs << endl << endl;
-    /*
+    
         cout << "--------" << endl;
         cout << "\e[1mDijkstra\e[0m" << endl << endl;
         cout << "--------" << endl << endl;
         g3.Dijkstra(puzzle, 2);
-        cout << "Expected cost: " << dfs << endl;
-        cout << "Calculated cost: " << g3.getCost() << endl << endl; */
+        cout << "Expected cost: " << dijkstra << endl << endl;
 
         getline(in, line);
         pzl++;
