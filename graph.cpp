@@ -195,7 +195,7 @@ void Graph::BFS(vector<int> pzl, int mode) // Breadth first search algorithm
         }
         else if (mode == 1 && v.label != 0) // If it doesn't contain the solution and we are in debug mode
         {
-            cout << endl << "Move " << v.label << ":" << endl; // Print the current puzzle state
+            cout << endl << "Move " << current - 1 << ":" << endl; // Print the current puzzle state
             print(v.puzzle);
         }
 
@@ -271,7 +271,7 @@ void Graph::DFS(vector<int> pzl, int mode)
         }
         else if (mode == 1 && v.label != 0) // If it doesn't contain the solution and we are in debug mode
         {
-            cout << endl << "Move " << v.label << ":" << endl; // Print the current puzzle state
+            cout << endl << "Move " << current - 1 << ":" << endl; // Print the current puzzle state
             print(v.puzzle);
         }
 
@@ -399,13 +399,18 @@ void Graph::Dijkstra(vector<int> pzl, int mode)
         v = minU; // now we evaluate new node we chose
     } // end while
 
-    //print the path
-    for(int i = 0; i < path.size(); ++i){
-        cout << endl << "Move " << i << ": " << endl;
-        print(path[i].puzzle, 1);
-        cout << endl;
+    //print the path if in debug mode
+    if (mode == 1)
+    {
+        for(int i = 0; i < path.size(); ++i){
+            cout << endl << "Move " << i << ": " << endl;
+            print(path[i].puzzle, 1);
+            cout << endl;
+        }
     }
-    //print the final cost
+    //print the final cost and puzzle
+    cout << "Puzzle solved!" << endl;
+    print(v.puzzle, 1);
     cout << "Minimum cost: " << currCost << endl;
 }
 

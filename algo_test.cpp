@@ -50,7 +50,7 @@ int main()
         cout << "Expected cost: " << dfs << endl << endl;
     
         cout << "--------" << endl;
-        cout << "\e[1mDijkstra\e[0m" << endl << endl;
+        cout << "\e[1mDijkstra\e[0m" << endl;
         cout << "--------" << endl << endl;
         g3.Dijkstra(puzzle, 2);
         cout << "Expected cost: " << dijkstra << endl << endl;
