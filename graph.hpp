@@ -14,7 +14,7 @@ struct vertex // Structure to hold a node of the graph
     vector<int> puzzle; // Array holding the puzzle -> First 3 elements = first row of 8 puzzle, etc.
     list<pair<vertex, unsigned long> > adjList; // Adjacency list to find adjacent nodes
 
-    int g; //the cost of making this MOVE
+    int g; //the cost or penalty of making this MOVE
     int sumGH; // the current cost and manhattDistance used in Dijkstra's
 };
 
@@ -45,7 +45,7 @@ class Graph
         void BFS(vector<int>, int); // Breadth First Search
         void DFS(vector<int>, int); // Depth First Search
         void Dijkstra(vector<int>, int); // Dijkstra's Algorithm
-        void print(vector<int>); // Print the solution and the total cost 
+        void print(vector<int>, int isDijkstras = 0); // Print the solution and the total cost 
         int getCost() {return cost;}
 };
 

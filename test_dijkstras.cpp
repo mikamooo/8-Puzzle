@@ -35,9 +35,9 @@ int main()
     // puzzle.push_back(7); puzzle.push_back(5); puzzle.push_back(4);
 
     // somewhat harder
-    puzzle.push_back(1); puzzle.push_back(2); puzzle.push_back(3);
-    puzzle.push_back(7); puzzle.push_back(8); puzzle.push_back(4);
-    puzzle.push_back(0); puzzle.push_back(6); puzzle.push_back(5);
+    // puzzle.push_back(1); puzzle.push_back(2); puzzle.push_back(3);
+    // puzzle.push_back(7); puzzle.push_back(8); puzzle.push_back(4);
+    // puzzle.push_back(0); puzzle.push_back(6); puzzle.push_back(5);
 
 
     vertex start;
