@@ -12,6 +12,7 @@ int main()
     bool valid = false;
 
     cout << "Enter the 8-puzzle to be solved row by row. Use 0 to indicate the empty slot." << endl;
+    cout << "For each row, enter each element separated by a space." << endl << endl;
     cout << "Enter the first row of elements in the 8-puzzle: ";
     cin >> puzzle.at(0) >> puzzle.at(1) >> puzzle.at(2);
     cout << "Enter the second row of elements in the 8-puzzle: ";
