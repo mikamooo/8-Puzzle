@@ -34,6 +34,7 @@ class Graph
         string algo;
         int label;
         vector<vertex> path;
+        bool quiet;
     public:
         Graph();
         ~Graph();

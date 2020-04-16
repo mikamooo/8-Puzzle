@@ -147,6 +147,8 @@ void Graph::BFS(vector<int> pzl, int mode) // Breadth first search algorithm
 {
     algo = "BFS";
     bool solved = false;
+    if (mode == 2)
+        quiet = true;
 
     vertex initial; // Create the root node that contains the initial state of the puzzle
     initial.label = label;
@@ -191,7 +193,10 @@ void Graph::BFS(vector<int> pzl, int mode) // Breadth first search algorithm
         {
             solved = true; // If it contains the solution set solved to true
             cout << endl << "Puzzle solved!" << endl; // Print out the final result
-            print(v.puzzle); 
+            cout << "Minimum Cost: " << cost << endl;
+            cout << "Minimum Number of Moves: " << current - 1 << endl; 
+            if (mode == 1)
+                print(v.puzzle); 
         }
         else if (mode == 1 && v.label != 0) // If it doesn't contain the solution and we are in debug mode
         {
@@ -221,6 +226,8 @@ void Graph::DFS(vector<int> pzl, int mode)
 {
     algo = "DFS";
     bool solved = false;
+    if (mode == 2)
+        quiet = true;
 
     vertex initial; // Create the root node that contains the initial state of the puzzle
     initial.label = 0;
@@ -267,7 +274,10 @@ void Graph::DFS(vector<int> pzl, int mode)
         {
             solved = true; // If it contains the solution set solved to true
             cout << endl << "Puzzle solved!" << endl; // Print out the final result
-            print(v.puzzle); 
+            cout << "Minimum Cost: " << cost << endl;
+            cout << "Minimum Number of Moves: " << current - 1 << endl; 
+            if (mode == 1)
+                print(v.puzzle); 
         }
         else if (mode == 1 && v.label != 0) // If it doesn't contain the solution and we are in debug mode
         {
@@ -356,6 +366,8 @@ int manhattanDistance(vector<int> pzl){
 void Graph::Dijkstra(vector<int> pzl, int mode)
 {
     algo = "D";
+    if (mode == 2)
+        quiet = true;
 
     vertex v;                       // instead of v = initial; bc we dont have a move constructor
     v.label = 0;
@@ -371,6 +383,7 @@ void Graph::Dijkstra(vector<int> pzl, int mode)
     map<vector<int>, bool> seen;    //check if a node's puzzle has already been seen to avoid loops 
     vector<vertex> path;            // the shortest path
     int currCost = 0;
+    int move = 0;
 
     seen.emplace(make_pair(v.puzzle, true));    // we have seen this initial vertex
     path.push_back(v);                          // we also agree it is the start of the path
@@ -393,10 +406,10 @@ void Graph::Dijkstra(vector<int> pzl, int mode)
             } // else: solution has been generated before
         }
 
-        cout << endl;
         path.push_back(minU); // add this min neighbor as next node in solution path
         currCost += minU.g; // curr cost is the addition of the tile value we just moved
         v = minU; // now we evaluate new node we chose
+        move++;
     } // end while
 
     //print the path if in debug mode
@@ -409,9 +422,11 @@ void Graph::Dijkstra(vector<int> pzl, int mode)
         }
     }
     //print the final cost and puzzle
-    cout << "Puzzle solved!" << endl;
-    print(v.puzzle, 1);
+    cout << endl << "Puzzle solved!" << endl;
+    if (mode == 1)
+        print(v.puzzle, 1);
     cout << "Minimum cost: " << currCost << endl;
+    cout << "Minimum number of moves: " << move << endl;
 }
 
 void Graph::print(vector<int> pzl, int isDijkstras) // Function to print out the puzzle and cost
@@ -420,7 +435,7 @@ void Graph::print(vector<int> pzl, int isDijkstras) // Function to print out the
     cout << pzl.at(0) << " " << pzl.at(1) << " " << pzl.at(2) << endl;
     cout << pzl.at(3) << " " << pzl.at(4) << " " << pzl.at(5) << endl;
     cout << pzl.at(6) << " " << pzl.at(7) << " " << pzl.at(8) << endl << endl;
-    if(isDijkstras) 
+    if(isDijkstras || quiet) 
         return;
     cout << "Total cost: " << cost << endl;
 }
