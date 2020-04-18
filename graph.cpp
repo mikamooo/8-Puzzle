@@ -422,9 +422,14 @@ void Graph::Dijkstra(vector<int> pzl, int mode)
                 // cout << "u.sumGH: " << u.sumGH << endl;
                 // cout << "minU.sumGH: " << minU.sumGH << endl;
 
-                if(u.sumGH <= minU.sumGH){ // we need to keep track of which neighbor has the least sum
+                if(u.sumGH < minU.sumGH){ // we need to keep track of which neighbor has the least sum
                     minU = u;
                 }
+                else if(u.sumGH == minU.sumGH){
+                    if (u.g < minU.g)
+                        minU = u;
+                }
+                
             } else {
                 // cout << "solution has been generated before" << endl;
                 // print(u.puzzle);          
