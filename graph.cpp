@@ -414,7 +414,7 @@ void Graph::Dijkstra(vector<int> pzl, int mode)
                 seen.emplace(make_pair(u.puzzle, true));  // add to seen bc its been discovered
                 // calculate G+H --> G will have to be the cost of this move U.g +currCost + manhattanDistance();
                 u.sumGH = u.g + currCost + manhattanDistance(u.puzzle);
-                cout << endl;
+                //cout << endl;
                 // cout << "u.g: " << u.g << endl;
                 // cout << "currCost: " << currCost << endl; 
                 // cout << "manhattanDist: " << manhattanDistance(u.puzzle) << endl;
