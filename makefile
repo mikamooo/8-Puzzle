@@ -1,3 +1,5 @@
+all: driver tester
+
 driver: driver.cpp graph.cpp
 	g++ -o driver -std=c++17 driver.cpp graph.cpp
 
